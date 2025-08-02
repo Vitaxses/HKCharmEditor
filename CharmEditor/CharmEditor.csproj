@@ -1,0 +1,114 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>CharmEditor</RootNamespace>
+    <AssemblyName>CharmEditor</AssemblyName>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyTitle>CharmEditor</AssemblyTitle>
+    <Product>CharmEditor</Product>
+    <Description>This mod allows you to change charm notches and Dashmaster</Description>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <!-- Debug configuration -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LocalRefs>/home/.steam/debian-installation/steamapps/common/Hollow Knight/hollow_knight_Data/Managed</LocalRefs>
+    <ModsPath1>$(LocalRefs)/Mods</ModsPath1>
+    <ModsPath2>$(MSBuildProgramFiles32)/Steam/steamapps/common/Hollow Knight/hollow_knight_Data/Managed/Mods</ModsPath2>
+    <ExportDir>Output</ExportDir>
+  </PropertyGroup>
+
+  <!-- Release configuration (now also using real game DLLs) -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LocalRefs>/home/.steam/debian-installation/steamapps/common/Hollow Knight/hollow_knight_Data/Managed</LocalRefs>
+    <ModsPath1>$(LocalRefs)/Mods</ModsPath1>
+    <ExportDir>Output</ExportDir>
+  </PropertyGroup>
+
+  <Target Condition="'$(Configuration)' == 'Release'" Name="PackageMod" AfterTargets="PostBuildEvent">
+    <RemoveDir Condition="Exists('$(ExportDir)')" Directories="$(ExportDir)" />
+    <MakeDir Directories="$(ExportDir)" />
+    <MakeDir Directories="$(ExportDir)/zip" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ExportDir)" />
+    <Copy Condition="'$(DocumentationFile)' != ''" SourceFiles="ReadMe.md;$(TargetPath);$(TargetDir)/$(TargetName).pdb;$(TargetDir)/$(TargetName).xml" DestinationFolder="$(ExportDir)/zip" />
+    <Copy Condition="'$(DocumentationFile)' == ''" SourceFiles="ReadMe.md;$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(ExportDir)/zip/" />
+    <ZipDirectory SourceDirectory="$(ExportDir)/zip" DestinationFile="$(ExportDir)/$(TargetName).zip" />
+    <RemoveDir Directories="$(ExportDir)/zip" />
+    <PropertyGroup>
+      <OutputFileString>$(AssemblyVersion)</OutputFileString>
+    </PropertyGroup>
+    <WriteLinesToFile File="Version.txt" Lines="$(OutputFileString)" Overwrite="true" Encoding="UTF-8" />
+  </Target>
+
+  <Target Condition="'$(Configuration)' == 'Debug'" Name="CopyMod" AfterTargets="PostBuildEvent">
+    <RemoveDir Condition="Exists('$(ModsPath1)/$(TargetName)')" Directories="$(ModsPath1)/$(TargetName)" />
+    <MakeDir Directories="$(ModsPath1)/$(TargetName)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(ModsPath1)/$(TargetName)" />
+    <RemoveDir Condition="Exists('$(ModsPath2)/$(TargetName)')" Directories="$(ModsPath2)/$(TargetName)" />
+    <MakeDir Directories="$(ModsPath2)/$(TargetName)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(ModsPath2)/$(TargetName)" />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(LocalRefs)/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(LocalRefs)/Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MMHOOK_Assembly-CSharp">
+      <HintPath>$(LocalRefs)/MMHOOK_Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MMHOOK_PlayMaker">
+      <HintPath>$(LocalRefs)/MMHOOK_PlayMaker.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour">
+      <HintPath>$(LocalRefs)/MonoMod.RuntimeDetour.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>$(LocalRefs)/MonoMod.Utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="PlayMaker">
+      <HintPath>$(LocalRefs)/PlayMaker.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(LocalRefs)/UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(LocalRefs)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(LocalRefs)/UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="ReadMe.md" />
+  </ItemGroup>
+</Project>
