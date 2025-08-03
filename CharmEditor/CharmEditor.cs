@@ -56,7 +56,6 @@ namespace CharmEditor
                     },
                     Loader = () => 0
                 },
-
                 GetMenuEntry("Wayward Compass Cost", "Wayward Compass notch cost", () => globalSettings.CompassCost, val => globalSettings.CompassCost = val),
                 GetMenuEntry("Gathering Swarm Cost", "Gathering Swarm notch cost", () => globalSettings.GatheringSwarmCost, val => globalSettings.GatheringSwarmCost = val),
                 GetMenuEntry("Stalwart Shell Cost", "Stalwart Shell notch cost", () => globalSettings.StalwartShellCost, val => globalSettings.StalwartShellCost = val),
@@ -107,7 +106,9 @@ namespace CharmEditor
                 GetMenuEntry("Sporeshroom Cost", "Sporeshroom notch cost", () => globalSettings.SporeshroomCost, val => globalSettings.SporeshroomCost = val),
                 GetMenuEntry("Hiveblood Cost", "Hiveblood notch cost", () => globalSettings.HivebloodCost, val => globalSettings.HivebloodCost = val),
                 GetMenuEntry("Grimmchild Cost", "Grimmchild notch cost", () => globalSettings.GrimmchildCost, val => globalSettings.GrimmchildCost = val),
-                GetMenuEntry("Void Heart/King's Soul", "Void Heart/King's Soul notch cost", () => globalSettings.VoidHeartCost, val => globalSettings.VoidHeartCost = val)
+                GetMenuEntry("Carefree Melody Cost", "Carefree Melody notch cost", () => globalSettings.CarefreeMelodyCost, val => globalSettings.CarefreeMelodyCost = val),
+                GetMenuEntry("King's Soul Cost", "King's Soul notch cost", () => globalSettings.KingsSoulCost, val => globalSettings.KingsSoulCost = val),
+                GetMenuEntry("Void Heart Cost", "Void Heart notch cost", () => globalSettings.VoidHeartCost, val => globalSettings.VoidHeartCost = val)
             };
         }
 
@@ -146,12 +147,28 @@ namespace CharmEditor
             {
                 if (vector.y < 0)
                 {
-                    return new Vector2(HeroController.instance.cState.facingRight ? HeroController.instance.DASH_SPEED : -HeroController.instance.DASH_SPEED, 0f);
+                    HeroController hc = HeroController.instance;
+                    return new Vector2(hc.cState.facingRight ? hc.DASH_SPEED : -hc.DASH_SPEED, 0f);
                 }
             }
             return vector;
         }
 
+        private int HandleCharm(int charmId)
+        {
+            return charmId switch
+            {
+                36 => PlayerData.instance.royalCharmState == 4
+                    ? globalSettings.VoidHeartCost
+                    : globalSettings.KingsSoulCost,
+
+                40 => PlayerData.instance.grimmChildLevel == 5
+                    ? globalSettings.CarefreeMelodyCost
+                    : globalSettings.GrimmchildCost,
+
+                _ => throw new ArgumentOutOfRangeException(nameof(charmId), "Unsupported charm ID")
+            };
+        }
 
         private int ModHooks_GetPlayerIntHook(string name, int orig)
         {
@@ -192,11 +209,11 @@ namespace CharmEditor
                 nameof(PlayerData.instance.charmCost_33) => globalSettings.SpellTwisterCost,
                 nameof(PlayerData.instance.charmCost_34) => globalSettings.DeepFocusCost,
                 nameof(PlayerData.instance.charmCost_35) => globalSettings.GrubberflysElegyCost,
-                nameof(PlayerData.instance.charmCost_36) => globalSettings.VoidHeartCost,
+                nameof(PlayerData.instance.charmCost_36) => HandleCharm(36),
                 nameof(PlayerData.instance.charmCost_37) => globalSettings.SprintmasterCost,
                 nameof(PlayerData.instance.charmCost_38) => globalSettings.DreamshieldCost,
                 nameof(PlayerData.instance.charmCost_39) => globalSettings.WeaversongCost,
-                nameof(PlayerData.instance.charmCost_40) => globalSettings.GrimmchildCost,
+                nameof(PlayerData.instance.charmCost_40) => HandleCharm(40),
                 _ => orig,
             };
         }

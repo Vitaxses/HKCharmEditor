@@ -42,10 +42,12 @@ namespace CharmEditor
         public int DeepFocusCost = 4;
         public int GrubberflysElegyCost = 3;
         public int VoidHeartCost = 0;
+        public int KingsSoulCost = 5;
         public int SprintmasterCost = 1;
         public int DreamshieldCost = 3;
         public int WeaversongCost = 2;
         public int GrimmchildCost = 2;
+        public int CarefreeMelodyCost = 3;
 
         public void Reset()
         {
@@ -86,10 +88,12 @@ namespace CharmEditor
             DeepFocusCost = 4;
             GrubberflysElegyCost = 3;
             VoidHeartCost = 0;
+            KingsSoulCost = 5;
             SprintmasterCost = 1;
             DreamshieldCost = 3;
             WeaversongCost = 2;
             GrimmchildCost = 2;
+            CarefreeMelodyCost = 3;
         }
     }
 }
